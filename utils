@@ -1,0 +1,106 @@
+#!/bin/bash
+# Author: Stephen Harold Smith Sat 24 Jun '23
+
+# -= Notes: Rules and quidelines =-
+#| Newline characters should be insterted by Script and not by this wrapper.
+#| Exiting is the oppiste and should only be handled here in utils.
+#|
+#|
+#|
+
+# -= Debug: On/Off Print Status/State messages following thw workflow of the app =-
+#debug=1;
+function debug() {
+
+	[[ -z $debug ]] && return || printf "%s | DEBUG | " "$(date +%H:%M:%S)"
+	local msg=$1;
+	local var1=$2;
+	local var2=$3
+
+	if [ ! -z $var2 ]
+	then
+		[ ! -z $var1 ] && \
+		printf "\e[1;31m%s\e[m\n\r" "$msg" || \
+		printf "\e[1;31m%s %s\e[m\n\r" "$msg" "$var1"
+	else
+		printf "\e[1;31m%s %s %s\e[m\n\r" "$msg" "$var1" "$var2"
+	fi
+}
+
+# -= Exception: Print errors messages and exit with not zero =-
+function throwEx() {
+	local msg=$1;
+
+	exScript "helpText";
+	printf "\n\r\e[1;31m%s \n\rArgument:'%s'\e[m\n\r" "$msg" "$userInput";
+
+	exit -3;
+}
+
+# -= Execution: Make sure the script is available and fire it up =-
+function exScript() {
+	local fileName=$1;
+	local prefix='/usr/local/bin/utils.d';
+
+	[[ ! -r $prefix/$filename ]] && throwEx "$fileName not found in $prefix.";
+	# Execute Script...
+	. $prefix/$fileName;
+}
+
+# -= Entry Point: Application workflow starts here =-
+# -z returns True if the first argument has no value 
+[[ -z $1 ]] && throwEx "Argument required, use 'h' for valid arguments.";
+# trim user input to a single char (if possible) and declare as read-only variable
+declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
+# Set and test the number of chars in the variable
+argCount=$(echo ${#userInput});
+debug "Number characters in users argument is $argCount";
+[[ $argCount -gt 1 ]] && throwEx "Invalid argument lenght, use 'h' for valid arguments.";
+
+# -= Match: Convert users argument into a script selection =-
+case $userInput in
+
+	b)
+	exScript "bannerFile";
+	;;
+
+	h)
+	exScript "helpText";
+	;;
+
+	c)
+	exScript "listColors";
+	;;
+
+	e)
+	exScript "listEnvVars";
+	;;
+
+	g)
+	exScript "sysSetupGets";
+	;;
+
+	l)
+	exScript "listening";
+	;;
+
+	n)
+	exScript "networkState";
+	;;
+
+	p)
+	exScript "sanatizePATH";
+	;;
+
+	r)
+	exScript "readInMessage";
+	;;
+
+	u)
+	exScript "listUsers";
+	;;
+
+	*)
+	exScript "helpText";
+	;;
+esac

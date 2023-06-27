@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function sanatizePATH() {
+	local num=0;
+
+     echo -ne "\n\r";
+
+     for line in $( echo $PATH | tr -s ':' '\n' | egrep "\/" --color=always )
+     do
+     :	$((num++));
+	     echo -n $'\e[32m'"$num. "$'\e[m'"$line"$'\e[0;31m:\e[m\n\r';
+     done
+
+     echo -n $'\n\r';
+     echo -n $'\e[1;36mThis has \e[4mnot\e[m \e[1;36meffected the enviroments actual path in any way.\n\n\r';
+}
+
+sanatizePATH;
+unset -f sanatizePATH;
+exit 0;

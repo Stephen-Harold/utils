@@ -1,0 +1,134 @@
+#!/bin/bash
+debug=0;
+# call to include
+function debug() {
+	[[ $debug -ne 1 ]] && return || printf "\e[34m%s | DEBUG | " "$(date +%H:%M:%S)";
+
+    local msg=$1;
+    [[ -z $msg ]] && msg="no text sent to debug function";
+
+    printf "\e[1;31m%s %s %s\e[m" "$msg";
+    printf "\n\r";
+}
+
+commands=(
+	"getdate"\
+	"gettime"\
+	"gettimezone"\
+	"getusingnetworktime"\
+	"getnetworktimeserver"\
+	"getsleep"\
+	"getcomputersleep"\
+	"getdisplaysleep"\
+	"getharddisksleep"\
+	"getwakeonnetworkaccess"\
+	"getrestartpowerfailure"\
+	"getrestartfreeze"\
+	"getallowpowerbuttontosleepcomputer"\
+	"getremoteappleevents"\
+	"getcomputername"\
+	"getlocalsubnetname"\
+	"getstartupdisk"\
+	"getwaitforstartupafterpowerfailure"\
+	"getdisablekeyboardwhenenclosurelockisengaged"\
+);
+
+#Time: 20:23:51
+#Time Zone: Europe/Dublin
+#Network Time: On
+#Network Time Server: time.euro.apple.com
+#Sleep: Computer sleeps after 30 minutes
+#Sleep: Display sleeps after 30 minutes
+#Sleep: Disk sleeps after 10 minutes
+#Computer Sleep: after 30 minutes
+#Display Sleep: after 30 minutes
+#Hard Disk Sleep: after 10 minutes
+#Wake On Modem: Not supported on this machine.
+#Wake On Network Access: Off
+#Restart After Power Failure: Not supported on this machine.
+#Restart After Freeze: On
+#getAllowPowerButtonToSleepComputer: On
+#Remote Login: Off
+#Remote Apple Events: Off
+#Computer Name: MacBook-Pro
+#Local Subnet Name: MacBook-Pro
+#getwaitforstartupafterpowerfailure: 0 seconds
+#getdisablekeyboardwhenenclosurelockisengaged: No
+
+#1234567(12)12345678901234567890123456789(32)123456789012345678901234567890123456789(42)
+#  Number	Command							 Output
+#  ------	----------------------------	 ------------------------------------
+#|	1.		Time 							 20:23:51
+#|	2.		Time Zone 						 Europe/Dublin
+#|	3.		Network Time 					 On
+#|	4.		Network Time Server 			 time.euro.apple.com
+#|	5.		Sleep 							 Computer sleeps after 30 minutes
+#|	6.		Sleep			 				 Display sleeps after 30 minutes
+#|	7.		Sleep 							 Disk sleeps after 10 minutes
+#|	8.		Computer Sleep	  				 after 30 minutes
+#|	9.		Display Sleep 					 after 30 minutes
+#|	10.		Hard Disk Sleep 				 after 10 minutes
+#|	11.		Wake On Modem 					 Not supported on this machine.
+#|	12.		Wake On Network Access 			 Off
+#|	13.		Restart After Power Failure 	 Not supported on this machine.
+#|	14.		Restart After Freeze 			 On
+#|	15.		getAllowPowerButtonToSleep
+#|			Computer 						 On
+#|	16.		Remote Login 					 Off
+#|	17.		Remote Apple Events 			 Off
+#|	18.		Computer Name 					 MacBook-Pro
+#|	19.		Local Subnet Name 				 MacBook-Pro
+#|	20.		getwaitforstartupafterpower
+#|			failure 						 0 seconds
+#|	21.		getdisablekeyboardwhen
+#|			enclosurelockisengaged	 		 No
+#-----------------------------------------------------------------------------
+
+function formatOutput() {
+	num=1;
+	printf "%-5s  %-32s %-42s \n\r" $'\e[1;4;37mNo.\e[m' $'\e[1;4;37mCommand\e[m' $'\t\t\e[1;4;37mOutput\e[m'
+	for c in ${commands[@]}
+	do
+		output=$(systemsetup -$c);
+	 	debug "variable output has value of $output";
+		debug "c has value of $c";
+		case $c in
+
+			getsleep)
+				# SKIP SKIP SKIP SKIP
+				debug "case match: no print & DO NOTHING on ||| getsleep |||";
+				# SKIP SKIP SKIP SKIP
+			;;
+
+			getallowpowerbuttontosleepcomputer)
+				debug "case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||";
+				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
+				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
+			;;
+
+			getwaitforstartupafterpowerfailure)
+				debug "case match: custom print & continue on ||| getwaitforstartupafterpowerfailure |||";
+				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
+				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
+			;;
+
+			getdisablekeyboardwhenenclosurelockisengaged)
+				debug "case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||";
+				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
+				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
+			;;
+
+			*)
+				debug "Case default: $c ${output//*:}";
+				printf "%-5s%-32s%-42s\n\r" "$num." "$c" "${output//*:}";
+			;;
+
+	esac
+	:	$((num++));
+
+	done
+	printf "\n\r";
+}
+
+formatOutput;
+unset -f formatOutput;

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function listUsers() {
+
+    # local dbSwitch=$2;
+    local num=0;
+
+    for u in $(dscl . list /Users | grep -v '^_')
+    do
+    :   $((++num));
+        printf "\e[1;37m%6d.\e[m\t\e[1;34m%-64s\e[m\n\r" "$num" "$u";
+    done;
+}
+
+listUsers;
+unset -f listUsers;
+exit 0;
