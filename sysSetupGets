@@ -1,15 +1,15 @@
 #!/bin/bash
-debug=0;
-# call to include
-function debug() {
-	[[ $debug -ne 1 ]] && return || printf "\e[34m%s | DEBUG | " "$(date +%H:%M:%S)";
-
-    local msg=$1;
-    [[ -z $msg ]] && msg="no text sent to debug function";
-
-    printf "\e[1;31m%s %s %s\e[m" "$msg";
-    printf "\n\r";
-}
+#debug=0;
+## call to include
+#function debug() {
+#	[[ $debug -ne 1 ]] && return || printf "\e[34m%s | DEBUG | " "$(date +%H:%M:%S)";
+#
+#    local msg=$1;
+#    [[ -z $msg ]] && msg="no text sent to debug function";
+#
+#    printf "\e[1;31m%s %s %s\e[m" "$msg";
+#    printf "\n\r";
+#}
 
 commands=(
 	"getdate"\
@@ -84,46 +84,51 @@ commands=(
 #|			enclosurelockisengaged	 		 No
 #-----------------------------------------------------------------------------
 
+declare -x dmsg="Debug message not set.";
+
 function formatOutput() {
 	local num=1;
 	local wht=$(tput setaf 15; tput smul;);
+	local grn=$(tput setaf 2);
+	local ylw=$(tput setaf 11);
 	local ul=$(tput smul;);
 	local lu=$(tput rmul;);
 	local rst=$(tput sgr0;);
-	printf "${wht}%-8s   ${wht}%-36s\t   ${wht}%-42s$rst\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
+	printf "\n\r${hdr}%-8s   ${hdr}%-36s\t   ${hdr}%-42s$rst\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
 	for c in ${commands[@]}
 	do
 		output=$(systemsetup -$c);
-	 	debug "variable output has value of $output";
-		debug "c has value of $c";
+	 	dmsg="variable output has value of $output"; debug;
+		dmsg="c has value of $c"; debug;
 		case $c in
 
 			getsleep)
-				# SKIP SKIP SKIP SKIP
-				debug "case match: no print & DO NOTHING on ||| getsleep |||";
+				dmsg="case match: no print & DO NOTHING on ||| getsleep |||"; debug;
 				# SKIP SKIP SKIP SKIP
 			;;
 
 			gettime|getdate)
-				debug "case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||";
-				printf "%-6s%-36s %-42s\n\r" "$num" "$c" "$output";
+				dmsg="case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||"; debug;
+				printf "%-6s${grn}%-36s${rst} ${ylw}%-42s${rst}\n\r" "$num" "$c" "$output";
 			;;
 
 			getdisablekeyboardwhenenclosurelockisengaged)
-				debug "case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||";
-				printf "%-6s%-36s%-42s\n\r" "$num" "$c" "${output//*:}";
+				dmsg="case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||"; debug;
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num" "$c" "${output//*:}";
 			;;
 
 			*)
-				debug "Case default: $c ${output//*:}";
-				printf "%-6s%-36s%-42s\n\r" "$num." "$c" "${output//*:}";
+				dmsg="Case default: $c ${output//*:}"; debug;
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num." "$c" "${output//*:}";
 			;;
 
 	esac
 	:	$((num++));
 
 	done
-	printf "\n\r";
+
+echo -e "\nUse ${code} sudo systemsetup -<command> ${rst} to see the commands individualy.\n\rDon't forget the '-' tack infront of the command.."
+echo -e "\n\r";
 }
 
 formatOutput;

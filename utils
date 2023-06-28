@@ -8,24 +8,29 @@
 #|
 #|
 
-# -= Debug: On/Off Print Status/State messages following thw workflow of the app =-
-#debug=1;
-function debug() {
+# -= Chars: Script names =-
+#| h = helpText
+#| c = listColors
+#| e = listEnvVars
+#| u = listUsers
+#| n = networkState
+#| r = readInMessage
+#| p = sanatizePATH
+#| s = sysSetupGets
 
-	[[ -z $debug ]] && return || printf "%s | DEBUG | " "$(date +%H:%M:%S)"
-	local msg=$1;
-	local var1=$2;
-	local var2=$3
+declare -a scriptArray;
+scriptArray=(\
+		[h]="helpText"\
+		 [c]="listColors"\
+		 [e]="listEnVars"\
+		 [u]="listUsers"\
+		 [n]="networkState"\
+		 [r]="readInMessage"\
+		 [p]="sanatizePATH"\
+		 [s]="sysSetupGets" );
 
-	if [ ! -z $var2 ]
-	then
-		[ ! -z $var1 ] && \
-		printf "\e[1;31m%s\e[m\n\r" "$msg" || \
-		printf "\e[1;31m%s %s\e[m\n\r" "$msg" "$var1"
-	else
-		printf "\e[1;31m%s %s %s\e[m\n\r" "$msg" "$var1" "$var2"
-	fi
-}
+# array of chars that will need sudo to run
+reqSudo=( "g" );
 
 # -= Exception: Print errors messages and exit with not zero =-
 function throwEx() {
@@ -48,14 +53,37 @@ function exScript() {
 }
 
 # -= Entry Point: Application workflow starts here =-
-# -z returns True if the first argument has no value 
+
+# Get common functions and variables
+confFile="/usr/local/bin/utils.d/utils.conf";
+[[ -r $confFile ]] && source $confFile || echo "Configuration file not available at $confFile"
+
+# -z returns True if the first argument has no value
 [[ -z $1 ]] && throwEx "Argument required, use 'h' for valid arguments.";
+
 # trim user input to a single char (if possible) and declare as read-only variable
 declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
+
 # Set and test the number of chars in the variable
 argCount=$(echo ${#userInput});
-debug "Number characters in users argument is $argCount";
+
+dmsg="Number characters in users argument is $argCount"; debug;
 [[ $argCount -gt 1 ]] && throwEx "Invalid argument lenght, use 'h' for valid arguments.";
+
+# Check if listed as requiring sudo
+for char in $reqSudo
+do
+	dmsg="Checking if '$userInput' requires sudo?"; debug;
+	if [[ "$char" = "$userInput" ]]
+	then
+		dmsg="User input '$userInput' ${ul}matches${lu} '$char', sudo required!" debug;
+		echo "You need administrator privilege to run the $userInput scipt.";
+		echo -e "Use ${codeclr} sudo utils g ${rst} to run ${userInput}'s script";
+		exit 101;
+	else
+		dmsg="No, '$userInput' doesn't require sudo prefix."; debug;
+	fi
+done
 
 # -= Match: Convert users argument into a script selection =-
 case $userInput in
@@ -76,10 +104,6 @@ case $userInput in
 	exScript "listEnvVars";
 	;;
 
-	g)
-	exScript "sysSetupGets";
-	;;
-
 	l)
 	exScript "listening";
 	;;
@@ -94,6 +118,10 @@ case $userInput in
 
 	r)
 	exScript "readInMessage";
+	;;
+
+	s)
+	exScript "sysSetupGets";
 	;;
 
 	u)
