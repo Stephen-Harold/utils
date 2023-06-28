@@ -85,8 +85,12 @@ commands=(
 #-----------------------------------------------------------------------------
 
 function formatOutput() {
-	num=1;
-	printf "%-5s  %-32s %-42s \n\r" $'\e[1;4;37mNo.\e[m' $'\e[1;4;37mCommand\e[m' $'\t\t\e[1;4;37mOutput\e[m'
+	local num=1;
+	local wht=$(tput setaf 15; tput smul;);
+	local ul=$(tput smul;);
+	local lu=$(tput rmul;);
+	local rst=$(tput sgr0;);
+	printf "${wht}%-8s   ${wht}%-36s\t   ${wht}%-42s$rst\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
 	for c in ${commands[@]}
 	do
 		output=$(systemsetup -$c);
@@ -100,27 +104,19 @@ function formatOutput() {
 				# SKIP SKIP SKIP SKIP
 			;;
 
-			getallowpowerbuttontosleepcomputer)
+			gettime|getdate)
 				debug "case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||";
-				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
-				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
-			;;
-
-			getwaitforstartupafterpowerfailure)
-				debug "case match: custom print & continue on ||| getwaitforstartupafterpowerfailure |||";
-				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
-				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
+				printf "%-6s%-36s %-42s\n\r" "$num" "$c" "$output";
 			;;
 
 			getdisablekeyboardwhenenclosurelockisengaged)
 				debug "case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||";
-				printf "%-5s%-32s%-42s\n\r" "$num" "$c" $' ';
-				printf "%-5s%-32s%-42s\n\r" $' ' $' ' "${output//*:}";
+				printf "%-6s%-36s%-42s\n\r" "$num" "$c" "${output//*:}";
 			;;
 
 			*)
 				debug "Case default: $c ${output//*:}";
-				printf "%-5s%-32s%-42s\n\r" "$num." "$c" "${output//*:}";
+				printf "%-6s%-36s%-42s\n\r" "$num." "$c" "${output//*:}";
 			;;
 
 	esac
