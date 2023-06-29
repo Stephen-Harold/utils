@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/locl/bin/bash
 
 function showBanner() {
     # -= BACKGROUND =-

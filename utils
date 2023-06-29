@@ -1,53 +1,38 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 # Author: Stephen Harold Smith Sat 24 Jun '23
 
 # -= Notes: Rules and quidelines =-
 #| Newline characters should be insterted by Script and not by this wrapper.
 #| Exiting is the oppiste and should only be handled here in utils.
+#| Each script should have a 'requireSudo' variable set to '1' if sudo is required.
 #|
 #|
-#|
 
-# -= Chars: Script names =-
-#| h = helpText
-#| c = listColors
-#| e = listEnvVars
-#| u = listUsers
-#| n = networkState
-#| r = readInMessage
-#| p = sanatizePATH
-#| s = sysSetupGets
-
-declare -a scriptArray;
-scriptArray=(\
-		[h]="helpText"\
-		 [c]="listColors"\
-		 [e]="listEnVars"\
-		 [u]="listUsers"\
-		 [n]="networkState"\
-		 [r]="readInMessage"\
-		 [p]="sanatizePATH"\
-		 [s]="sysSetupGets" );
-
-# array of chars that will need sudo to run
-reqSudo=( "g" );
-
-# -= Exception: Print errors messages and exit with not zero =-
-function throwEx() {
-	local msg=$1;
-
-	exScript "helpText";
-	printf "\n\r\e[1;31m%s \n\rArgument:'%s'\e[m\n\r" "$msg" "$userInput";
-
-	exit -3;
+# -= ScriptName: get script name from array =-
+function getFileName() {
+	for s in ${!sar[@]}
+	do
+		dmsg="Testing $s against $userInput"; debug;
+		if [[ $s = $userInput ]]
+		then
+			dmsg="Match found for script name $s = $userInput"; debug;
+			fileName=${sar[$s]};
+			break;
+		else
+			dmsg="No match: '$s' != '$userInput'"; debug;
+			continue;
+		fi
+	done
+	[[ -z $fileName ]] && throwEx "utils" "getFileName" "The '$userInput' does not have a file associated with it, no file found in array." 104;
+	dmsg="File name is set to $fileName"; debug;
 }
 
 # -= Execution: Make sure the script is available and fire it up =-
 function exScript() {
-	local fileName=$1;
+	[[ -z $fileName ]] && throwEx "utils" "exScript" "The file name has not been set, cannot continue." 105;
 	local prefix='/usr/local/bin/utils.d';
 
-	[[ ! -r $prefix/$filename ]] && throwEx "$fileName not found in $prefix.";
+#	[[ -r "$prefix/$fileName" ]] && throwEx "utils" "exScript" "$fileName not found in $prefix" 106;
 	# Execute Script...
 	. $prefix/$fileName;
 }
@@ -56,10 +41,10 @@ function exScript() {
 
 # Get common functions and variables
 confFile="/usr/local/bin/utils.d/utils.conf";
-[[ -r $confFile ]] && source $confFile || echo "Configuration file not available at $confFile"
+[[ -r $confFile ]] && source $confFile || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101;
 
 # -z returns True if the first argument has no value
-[[ -z $1 ]] && throwEx "Argument required, use 'h' for valid arguments.";
+[[ -z $1 ]] && throwEx "utils" "Argument set?" "Argument required, use 'h' for valid arguments." 102;
 
 # trim user input to a single char (if possible) and declare as read-only variable
 declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
@@ -68,67 +53,8 @@ declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
 argCount=$(echo ${#userInput});
 
 dmsg="Number characters in users argument is $argCount"; debug;
-[[ $argCount -gt 1 ]] && throwEx "Invalid argument lenght, use 'h' for valid arguments.";
+[[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght, use 'h' for valid arguments." 103;
 
-# Check if listed as requiring sudo
-for char in $reqSudo
-do
-	dmsg="Checking if '$userInput' requires sudo?"; debug;
-	if [[ "$char" = "$userInput" ]]
-	then
-		dmsg="User input '$userInput' ${ul}matches${lu} '$char', sudo required!" debug;
-		echo "You need administrator privilege to run the $userInput scipt.";
-		echo -e "Use ${codeclr} sudo utils g ${rst} to run ${userInput}'s script";
-		exit 101;
-	else
-		dmsg="No, '$userInput' doesn't require sudo prefix."; debug;
-	fi
-done
-
-# -= Match: Convert users argument into a script selection =-
-case $userInput in
-
-	b)
-	exScript "bannerFile";
-	;;
-
-	h)
-	exScript "helpText";
-	;;
-
-	c)
-	exScript "listColors";
-	;;
-
-	e)
-	exScript "listEnvVars";
-	;;
-
-	l)
-	exScript "listening";
-	;;
-
-	n)
-	exScript "networkState";
-	;;
-
-	p)
-	exScript "sanatizePATH";
-	;;
-
-	r)
-	exScript "readInMessage";
-	;;
-
-	s)
-	exScript "sysSetupGets";
-	;;
-
-	u)
-	exScript "listUsers";
-	;;
-
-	*)
-	exScript "helpText";
-	;;
-esac
+# get chars relative script filename and check if sudo is required
+getFileName;
+exScript;
