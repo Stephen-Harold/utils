@@ -32,7 +32,7 @@ function exScript() {
 	[[ -z $fileName ]] && throwEx "utils" "exScript" "The file name has not been set, cannot continue." 105;
 	local prefix='/usr/local/bin/utils.d';
 
-#	[[ -r "$prefix/$fileName" ]] && throwEx "utils" "exScript" "$fileName not found in $prefix" 106;
+	[[ ! -r "$prefix/$fileName" ]] && throwEx "utils" "exScript" "Permissions are wrong on $prefix/$fileName, it isn't readable." 106;
 	# Execute Script...
 	. $prefix/$fileName;
 }
@@ -55,6 +55,18 @@ argCount=$(echo ${#userInput});
 dmsg="Number characters in users argument is $argCount"; debug;
 [[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght, use 'h' for valid arguments." 103;
 
-# get chars relative script filename and check if sudo is required
+# check if sudo is required
+for v in $reqSudo
+do
+	if [[ "$v" = "$userInput" ]] && [[ "$USER" != "root" ]]
+	then
+		echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
+		echo -e "re-run using:\n\r\t\t${codeclr} sudo utils $userInput $rst\n\r";
+		exit 107;
+	fi
+done
+
 getFileName;
 exScript;
+# clean exit
+exit 0;

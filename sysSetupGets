@@ -11,8 +11,6 @@
 #    printf "\n\r";
 #}
 
-declare -r requireSudo=1;
-
 commands=(
 	"getdate"\
 	"gettime"\
