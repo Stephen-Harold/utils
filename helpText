@@ -40,12 +40,13 @@ function banner() {
 
 function helpText() {
     banner; # call the banner function
-	umb=1;
-	helpbgc=$(tput setab 237);
+	local umb=1;
+	local helpbgc=$(tput setab 237); # alternates to 243 for stripes
     # -= DEFAULT CASE: HELP TEXT AND INSTRUCTONS =-
 	printf "$hdr%-8s$lu $hdr%-16s \t  $hdr%-80s$rst\n\r"	"Argument$lu"	"Script Name$lu" "Description$lu";
 	for cmd in ${!sar[@]}
 	do
+		# aleternation on even number
 		[[ $((umb%2)) -eq 0  ]] && helpbgc=$(tput setab 237) || helpbgc=$(tput setab 234)
 		printf "$helpbgc${org}%-8s ${grn}%-16s ${ylw}%-80s$rst\n\r" "  $cmd" "${sar[$cmd]}" "${helpTextArray[$cmd]}";
 :		$((umb++));
@@ -56,4 +57,5 @@ function helpText() {
 }
 
 helpText;
+unset -f banner;
 unset -f helpText;

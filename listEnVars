@@ -36,5 +36,6 @@ function listEnvVars() {
 }
 
 listEnvVars;
+unset -p printEnvVars;
 unset -f listEnvVars;
 exit 0;

@@ -37,4 +37,3 @@ function showBanner() {
 }
 showBanner;
 unset -f showBanner;
-exit 0;

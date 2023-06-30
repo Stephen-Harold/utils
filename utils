@@ -43,8 +43,8 @@ function exScript() {
 confFile="/usr/local/bin/utils.d/utils.conf";
 [[ -r $confFile ]] && source $confFile || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101;
 
-# -z returns True if the first argument has no value
-[[ -z $1 ]] && throwEx "utils" "Argument set?" "Argument required, use 'h' for valid arguments." 102;
+# #102 -z returns True if the first argument has no value
+[[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1;
 
 # trim user input to a single char (if possible) and declare as read-only variable
 declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
@@ -53,7 +53,7 @@ declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
 argCount=$(echo ${#userInput});
 
 dmsg="Number characters in users argument is $argCount"; debug;
-[[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght, use 'h' for valid arguments." 103;
+[[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
 
 # check if sudo is required
 for v in $reqSudo
@@ -68,5 +68,11 @@ done
 
 getFileName;
 exScript;
+
+unset -f getFileName;
+unset -f exScript;
+unset confFile;
+unset argCount;
+declare +r $userInput;
 # clean exit
 exit 0;

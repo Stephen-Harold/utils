@@ -84,8 +84,6 @@ commands=(
 #|			enclosurelockisengaged	 		 No
 #-----------------------------------------------------------------------------
 
-declare -x dmsg="Debug message not set.";
-
 function formatOutput() {
 	local num=1;
 	local wht=$(tput setaf 15; tput smul;);
@@ -133,4 +131,5 @@ echo -e "\n\r";
 
 formatOutput;
 unset -f formatOutput;
-
+unset commands;
+unset 

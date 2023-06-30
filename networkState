@@ -1,39 +1,52 @@
 #!/bin/bash
 
-requireSudo=0;
 printf "\n\r${hdr}%-16s  \t ${hdr}%-16s${rst}\n\r" "Key$lu" "Value$lu"
 printf "${grn}%-16s ${ylw}%-16s${rst}\n\r" "Interface" "Wi-Fi"
-networksetup -getinfo Wi-Fi |
-while IFS= read -r line
-do
-	case "$line" in
-		"DHCP Configuration")
-			continue;
-		;;
+# pipe networksetup into while loop
+function loopNetworkSetup() {
+	networksetup -getinfo Wi-Fi |
+	while IFS= read -r line
+	do
+		case "$line" in
+			"DHCP Configuration")
+				continue;
+			;;
 
-		"Client ID: ")
-			continue;
-		;;
+			"Client ID: ")
+				continue;
+			;;
 
-		"Wi-Fi ID: a4:cf:99:69:ef:05")
-		    printf "${grn}%-16s${ylw} %-16s${rst}\n\r" "MAC Address" "${line:10}";
-    		continue;
-    	;;
+			"Wi-Fi ID: a4:cf:99:69:ef:05")
+			    printf "${grn}%-16s${ylw} %-16s${rst}\n\r" "MAC Address" "${line:10}";
+	    		continue;
+	    	;;
 
-    	*)
-    		printf "${grn}%-16s${ylw}%-16s${rst}\n\r" "${line//:*}" "${line//*:}"
-    	;;
-    esac
-done
+	    	*)
+	    		printf "${grn}%-16s${ylw}%-16s${rst}\n\r" "${line//:*}" "${line//*:}"
+	    	;;
+	    esac
+	done
+}
 
-broad=$(ifconfig en0 | egrep inet );
-cast=${broad//*'broadcast'}
-printf "${grn}%-16s${ylw}%-16s${rst}\n\r" "Broadcast" "$cast"
-printf "${grn}%-16s${ylw} %-16s${rst}\n\r" "DNS Servers" "$(networksetup -getdnsservers Wi-Fi | tr '\n' " " )";
+function getDNSvrs() {
+	local broad=$(ifconfig en0 | egrep inet );
+	local cast=${broad//*'broadcast'}
+	printf "${grn}%-16s${ylw}%-16s${rst}\n\r" "Broadcast" "$cast"
+	printf "${grn}%-16s${ylw} %-16s${rst}\n\r" "DNS Servers" "$(networksetup -getdnsservers Wi-Fi | tr '\n' " " )";
+}
 
-echo -e "\n\r${hdr}Listening and Established network ports$lu$rst"
+function getListEst() {
+	echo -e "\n\r${hdr}Listening and Established network ports$lu$rst"
+	lsof -i -P | egrep -i LISTEN
+	lsof -i -P | egrep -i ESTABLISHED
+}
 
-lsof -i -P | egrep -i LISTEN
 
-lsof -i -P | egrep -i ESTABLISHED
+loopNetworkSetup;
+getDNSvrs;
+getListEst;
+
+unset -f loopNetworkSetup;
+unset -f getDNSvrs;
+unset -f getDNSvrs;
 
