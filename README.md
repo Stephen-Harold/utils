@@ -11,3 +11,5 @@ A bunch of bash script that provide functionality to the apple mac command line 
   e      listEnVars       Displays all the enviromental variables exported to the current terminal. To see the raw output use  printenv 
   c      listColors       Displays all the numbers from 1 to 254 of the colors the created with the tput command. example:  tput setaf <number> 
   b      bannerFile       Displays the utils application banner usualy displayed in the help menu      
+
+  ![The App's Banner](https://github.com/Stephen-Harold/utils/edit/main/utilsBanner.png)
