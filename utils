@@ -9,50 +9,49 @@
 #|
 
 # -= ScriptName: get script name from array =-
-function getFileName() {
+function getScriptName() {
 	for s in ${!sar[@]}
 	do
-		dmsg="Testing $s against $userInput"; debug;
+		dmsg="utils: (getScriptName) Testing $s against $userInput"; debug;
 		if [[ $s = $userInput ]]
 		then
-			dmsg="Match found for script name $s = $userInput"; debug;
-			fileName=${sar[$s]};
+			dmsg="utils: (getScriptName) Match found for script name $s = $userInput"; debug;
+			scriptName=${sar[$s]};
 			break;
-		else
-			dmsg="No match: '$s' != '$userInput'"; debug;
-			continue;
 		fi
 	done
-	[[ -z $fileName ]] && throwEx "utils" "getFileName" "The '$userInput' does not have a file associated with it, no file found in array." 104;
-	dmsg="File name is set to $fileName"; debug;
+	[[ -z $scriptName ]] && throwEx "utils" "getScriptName" "'$userInput' does not have a file associated with it, no file found in array." 104 1;
+	dmsg="utils: (getScriptName) File name is set to $scriptName"; debug;
 }
 
 # -= Execution: Make sure the script is available and fire it up =-
 function exScript() {
-	[[ -z $fileName ]] && throwEx "utils" "exScript" "The file name has not been set, cannot continue." 105;
-	local prefix='/usr/local/bin/utils.d';
-
-	[[ ! -r "$prefix/$fileName" ]] && throwEx "utils" "exScript" "Permissions are wrong on $prefix/$fileName, it isn't readable." 106;
+	[[ -z $scriptName ]] && throwEx "utils" "exScript" "The file name has not been set, cannot continue." 105 0 || \
+	dmsg="utils: (exScript) $scriptName exists"; debug
+#	[[ -z $scriptDir ]] & throwEx "utils" "exScript" "'$( basename $scriptDir )' directory is not available." 106 0 || \
+#		dmsg="utils: (exScript) $scriptDir directory exists"; debug
+	[[ ! -r "$scriptDir/$scriptName" ]] && throwEx "utils" "exScript" "Permissions are wrong on $scriptDir/$scriptName, it isn't readable." 107 0 || \
+	dmsg="utils: (exScript) $scriptDir/$scriptName is readable, will be executed next"; debug
 	# Execute Script...
-	. $prefix/$fileName;
+	. $scriptDir/$scriptName;
+	dmsg="utils: (exScript) $scriptDir/$scriptName executed succesfully"; debug
 }
 
-# -= Entry Point: Application workflow starts here =-
+# -= ENTRY POINT: Application workflow starts here =-
+# get common functions and variables
+confFile="/usr/local/bin/utils.d/conf/utils.conf";
+[[ -r $confFile ]] && source $confFile; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101 0
 
-# Get common functions and variables
-confFile="/usr/local/bin/utils.d/utils.conf";
-[[ -r $confFile ]] && source $confFile || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101;
-
-# #102 -z returns True if the first argument has no value
+# 102 -z returns True if the first argument has no value
 [[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1;
 
 # trim user input to a single char (if possible) and declare as read-only variable
-declare -r userInput=$(echo $1 | tr '-' " " | tr -d " ");
+declare -r userInput=$( echo $1 | tr '-' " " | tr -d " " );
 
-# Set and test the number of chars in the variable
-argCount=$(echo ${#userInput});
+# set and test the number of chars in the variable
+argCount=$( echo ${#userInput} );
 
-dmsg="Number characters in users argument is $argCount"; debug;
+dmsg="utils: (ENTRY POINT) Number characters in users argument is $argCount"; debug;
 [[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
 
 # check if sudo is required
@@ -61,15 +60,15 @@ do
 	if [[ "$v" = "$userInput" ]] && [[ "$USER" != "root" ]]
 	then
 		echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
-		echo -e "re-run using:\n\r\t\t${codeclr} sudo utils $userInput $rst\n\r";
+		echo -e "re-run using: ${codeclr} sudo utils $userInput $rst\n\r";
 		exit 107;
 	fi
 done
 
-getFileName;
+getScriptName;
 exScript;
 
-unset -f getFileName;
+unset -f getScriptName;
 unset -f exScript;
 unset confFile;
 unset argCount;
