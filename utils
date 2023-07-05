@@ -39,7 +39,7 @@ function exScript() {
 
 # -= ENTRY POINT: Application workflow starts here =-
 # get common functions and variables
-confFile="/usr/local/bin/utils.d/conf/utils.conf";
+confFile="/usr/local/lib/utils.d/conf/utils.conf";
 [[ -r $confFile ]] && source $confFile; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101 0
 
 # 102 -z returns True if the first argument has no value
