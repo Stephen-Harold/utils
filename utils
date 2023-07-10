@@ -43,7 +43,7 @@ confFile="/usr/local/lib/utils.d/conf/utils.conf";
 [[ -r $confFile ]] && source $confFile; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101 0
 
 # 102 -z returns True if the first argument has no value
-[[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1;
+[[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1 || dmsg="Argument: $1"; debug;
 
 # trim user input to a single char (if possible) and declare as read-only variable
 declare -r userInput=$( echo $1 | tr '-' " " | tr -d " " );
@@ -55,13 +55,17 @@ dmsg="utils: (ENTRY POINT) Number characters in users argument is $argCount"; de
 [[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
 
 # check if sudo is required
-for v in $reqSudo
+for v in ${reqSudo[@]}
 do
+	dmsg="(sudo test) Testing $v against user input: $userInput"; debug;
 	if [[ "$v" = "$userInput" ]] && [[ "$USER" != "root" ]]
 	then
+		dmsg="(sudo test) Yes, $v does require sudo, current user is $USER"; debug;
 		echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
-		echo -e "re-run using: ${codeclr} sudo utils $userInput $rst\n\r";
+		echo -e "re-run using: ${codeclr} sudo utils $userInput $rst ${grn}or just enter ${codeclr} sudo !! $rst\n\r";
 		exit 107;
+	else
+		dmsg="(sudo test) sudo is ${ul}not${lu} required?"; debug;
 	fi
 done
 
