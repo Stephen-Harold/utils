@@ -1,68 +1,73 @@
 #!/usr/local/bin/bash
+# shellcheck disable=SC2034,SC2154,SC2250
 # Author: Stephen Harold Smith Sat 24 Jun '23
 
-# -= Notes: Rules and quidelines =-
-#| Newline characters should be insterted by Script and not by this wrapper.
-#| Exiting is the oppiste and should only be handled here in utils.
+# -= Notes: Rules and guidelines =-
+#| Newline characters should be inserted by Script and not by this wrapper.
+#| Exiting is the opposite and should only be handled here in utils.
 #| Each script should have a 'requireSudo' variable set to '1' if sudo is required.
 #|
 #|
 
-# -= ScriptName: get script name from array =-
+# -= {ScriptName}: get script name from array =-
 function getScriptName() {
-	for s in ${!sar[@]}
+	# shellcheck disable=SC2154
+	for s in "${!sar[@]}"
 	do
-		dmsg="utils: (getScriptName) Testing $s against $userInput"; debug;
-		if [[ $s = $userInput ]]
+		dmsg="utils: \(getScriptName\) Testing $s against ${userInput}"; debug;
+		if [[ $s = "${userInput}" ]]
 		then
 			scriptName=${sar[$s]};
-			dmsg="utils: (getScriptName) Breaking, match found for inside loop: $scriptName"; debug;
+			dmsg="utils: \(getScriptName\) Breaking, match found for inside loop: ${scriptName}"; debug;
 			break;
 		fi
 	done
-	[[ -z $scriptName ]] && throwEx "utils" "getScriptName" "'$userInput' does not have a file associated with it, no file found in array." 104 1 || \
-							dmsg="utils: (getScriptName) File name is set to $scriptName"; debug
+	[[ -z ${scriptName} ]] && throwEx "utils" "getScriptName" "'${userInput}' does not have a file associated with it, no file found in array." 104 1 || \
+							dmsg="utils: \(getScriptName\) File name is set to ${scriptName}"; debug
 }
 
 # -= Execution: Make sure the script is available and fire it up =-
 function exScript() {
-	[[ -z $scriptName ]] && throwEx "utils" "exScript" "The script file has not been set, cannot continue." 105 0 || \
-	dmsg="utils: (exScript) $scriptName exists"; debug
-#	[[ -z $scriptDir ]] & throwEx "utils" "exScript" "'$( basename $scriptDir )' directory is not available." 106 0 || \
-		dmsg="utils: (exScript) $scriptDir directory exists"; debug
-	[[ ! -r "$scriptDir/$scriptName" ]] && throwEx "utils" "exScript" "Permissions are wrong on $scriptDir/$scriptName, it isn't readable." 107 0 || \
-	dmsg="utils: (exScript) $scriptDir/$scriptName is readable, will be executed next"; debug
+	[[ -z ${scriptName} ]] && throwEx "utils" "exScript" "The script file has not been set, cannot continue." 105 0 || \
+	dmsg="utils: (exScript) ${scriptName} exists"; debug
+#	[[ -z ${scriptDir} ]] & throwEx "utils" "exScript" "'$( basename ${scriptDir} )' directory is not available." 106 0 || \
+		dmsg="utils: (exScript) ${scriptDir} directory exists"; debug
+	[[ ! -r "${scriptDir}/${scriptName}" ]] && dmsg="utils: (exScript) ${scriptDir}/${scriptName} is readable, will be executed next"; debug || \
+	throwEx "utils" "exScript" "Permissions are wrong on ${scriptDir}/${scriptName}, it isn't readable." 107 0
 	# Execute Script...
-	. $scriptDir/$scriptName;
-	dmsg="utils: (exScript) $scriptDir/$scriptName executed succesfully"; debug
+	# shellcheck disable=SC1090
+	. "${scriptDir}/${scriptName}";
+	dmsg="utils: (exScript) ${scriptDir}/${scriptName} executed succesfully"; debug
 }
 
 # -= ENTRY POINT: Application workflow starts here =-
 # get common functions and variables
 confFile="/usr/local/lib/utils.d/conf/utils.conf";
-[[ -r $confFile ]] && source $confFile; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at $confFile" 101 0
+# shellcheck disable=SC1090
+[[ -r ${confFile} ]] && source ${confFile}; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at ${confFile}" 101 0
 
 # 102 -z returns True if the first argument has no value
 [[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1 || dmsg="Argument: $1"; debug;
 
 # trim user input to a single char (if possible) and declare as read-only variable
-declare -r userInput=$( echo $1 | tr '-' " " | tr -d " " );
+# shellcheck disable=SC2155
+declare -r userInput="$( echo "$1" | tr '-' " " | tr -d " " )";
 
 # set and test the number of chars in the variable
-argCount=$( echo ${#userInput} );
+argCount="${#userInput}";
 
-dmsg="utils: (ENTRY POINT) Number characters in users argument is $argCount"; debug;
-[[ $argCount -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
+dmsg="utils: (ENTRY POINT) Number characters in users argument is ${argCount}"; debug;
+[[ ${argCount} -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
 
 # check if sudo is required
-for v in ${reqSudo[@]}
+for v in "${reqSudo[@]}"
 do
-	dmsg="(sudo test) Testing $v against user input: $userInput"; debug;
-	if [[ "$v" = "$userInput" ]] && [[ "$USER" != "root" ]]
+	dmsg="(sudo test) Testing $v against user input: ${userInput}"; debug;
+	if [[ "$v" = "${userInput}" ]] && [[ "${USER}" != "root" ]]
 	then
-		dmsg="(sudo test) Yes, $v does require sudo, current user is $USER"; debug;
+		dmsg="(sudo test) Yes, $v does require sudo, current user is ${USER}"; debug;
 		echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
-		echo -e "re-run using: ${codeclr} sudo utils $userInput $rst ${grn}or just enter ${codeclr} sudo !! $rst\n\r";
+		echo -e "re-run using: ${codeclr} sudo utils ${userInput} ${rst} ${grn}or just enter ${codeclr} sudo !! ${rst}\n\r";
 		exit 107;
 	else
 		dmsg="(sudo test) sudo is ${ul}not${lu} required?"; debug;
@@ -76,6 +81,6 @@ unset -f getScriptName;
 unset -f exScript;
 unset confFile;
 unset argCount;
-declare +r $userInput;
+declare +r "$userInput";
 # clean exit
 exit 0;
