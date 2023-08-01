@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+
+import sys
+import time
+import curses as cs
+import subprocess as sp
+from curses import wrapper
+from datetime import date
+
+def defineColors():
+    try:
+        stdscr = cs.initscr()
+        cs.noecho() # turn off automatic echoing of keys to the screen
+        cs.cbreak() # react to keys instantly
+        cs.curs_set(0)
+        cs.start_color()
+        cs.use_default_colors()
+        cs.init_pair(1, 1, 0)
+        cs.init_pair(2, 2, 7)
+        cs.init_pair(3, 3, 2)
+        cs.init_pair(4, 4, 7)
+        cs.init_pair(5, 5, 7)
+        cs.init_pair(6, 6, 0)
+        cs.init_pair(7, 7, 2)
+        cs.init_pair(8, cs.COLOR_RED, cs.COLOR_WHITE)
+        cs.init_pair(9, cs.COLOR_CYAN, cs.COLOR_BLACK)
+        cs.init_pair(10, cs.COLOR_YELLOW, cs.COLOR_MAGENTA)
+        cs.init_pair(11, cs.COLOR_WHITE, cs.COLOR_BLUE)
+        cs.init_pair(12, cs.COLOR_WHITE, cs.COLOR_MAGENTA)
+        cs.init_pair(13, cs.COLOR_YELLOW, cs.COLOR_GREEN)
+        cs.init_pair(14, cs.COLOR_WHITE, cs.COLOR_GREEN)
+    except Exception as ex:
+        returnNumber = 101
+        throwEx(returnNumber, ex);
+
+if __name__ == "__main__":
+    defineColors();
+
+
+
+# Entry point:
+# Call Main Function..
+if __name__ == "__main__":
+    try:
+        wrapper(main(sys.argv));
+    except KeyboardInterrupt:
+        print("[CNTRL] + C - Keyboard Interupt terminating application.")
+    except Exception as _ex:
+        throwEx(300, _ex);
+    finally:
+        terminateApp(returnNumber);

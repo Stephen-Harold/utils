@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# -= Defaults: Open Python3 App to Curses =-
+#python3 ../apps/listDefaultsAndEdit.py
+
+
+
+
+# Entry Point

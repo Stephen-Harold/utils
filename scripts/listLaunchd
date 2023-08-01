@@ -1,0 +1,63 @@
+#!/bin/bash
+
+function listServices() {
+	launchctl list;
+}
+
+function startService() {
+# launchctl start <path to service.plist>
+	local plist=$1;
+	launchctl start "$plist";
+}
+
+function stopService() {
+§	local plist=$1;
+	launchctl stop "$plist";
+}
+
+# List launch agents
+function listLaunchAgents() {
+# EXAMPLE: launchctl /System/Library/LaunchAgents/com.apple.followupd.plist
+	ls -lhGA /System/Library/LaunchAgents/
+}
+
+function loadLaunchAgentItem() {
+#	launchctl load /System/Library/LaunchAgents/com.apple.followupd.plist
+	local plist=$1;
+	launchctl load "$plist";
+}
+
+function unloadLaunchAgentItem() {
+# EXAMPLE: launchctl unload -w /System/Library/LaunchAgents/com.apple.followupd.plist
+	local plist=$1;
+	launchctl unload -w "$plist";
+}
+
+declare -A funcArray=( \
+					[1]="listServices" \
+					[2]="startService" \
+					[3]="stopService" \
+					[4]="listLaunchAgents" \
+					[5]="loadLaunchAgentItem" \
+					[6]="unloadLaunchAgentItem" );
+
+echo "Enter service name:";
+read answer;
+[[ -r $answer ]] && declare -x serviceName="$answer" || echo "Invalid service path"
+
+for f in ${!funcArray[@]}
+do
+	printf "%-6s %-32s" "$f" "$funcArray{[$f]}";
+done
+
+echo "Enter the number of the function required:"
+read number;
+
+for f in ${!funcArray[@]}
+do
+	if [[ "$number" =~ [1-6]{1} ]]
+	then
+		printf "Selected %s" "$funcArray{[$f]}";
+		$funcArray{[$f]}
+done
+

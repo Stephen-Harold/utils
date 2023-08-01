@@ -1,0 +1,61 @@
+#!/bin/bash
+function banner() {
+    # -= BACKGROUND =-
+    local b236=$(tput setab     236);
+    local b238=$(tput setab     238);
+    local b240=$(tput setab     240);
+    local b242=$(tput setab     242);
+    local b244=$(tput setab     244);
+    local b246=$(tput setab     246);
+    local b248=$(tput setab     248);
+    local b250=$(tput setab     250);
+    local b252=$(tput setab     252);
+    local b254=$(tput setab     254);
+    # -= FOREGROUND =-
+    local f250=$(tput setaf     250);
+    local f248=$(tput setaf     248);
+    local f246=$(tput setaf     246);
+    local f244=$(tput setaf     244);
+    local f242=$(tput setaf     242);
+    local f240=$(tput setaf     240);
+    local f238=$(tput setaf     238);
+    local f237=$(tput setaf     237);
+    local f236=$(tput setaf     236);
+    local f234=$(tput setaf     234);
+    local reset=$(tput sgr0);
+    # -= The Banner: THE LETTERS U T I L S in huge scale =-
+    echo -ne "\n\r";
+    printf "\t  $b234 $f250 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" ' ' ' ' ' ' ' ' ' ' ' ' ' ' '_' '_' '_' '_' '_' '_' '_' '_' ' ' ' ' ' ' ' ' ' ' ' ' '_' '_' '_' '_' '_' ' '
+    printf "\t  $b236 $f248 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' 'T' 'T' 'T' 'T' 'T' 'T' 'I' 'I' '|' '|' ' ' ' ' ' ' '/' '/' 'S' 'S' 'S' '\' '\'
+    printf "\t  $b238 $f246 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' 'T' 'T' ' ' ' ' '_' '_' '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' ' ' '|' '|'
+    printf "\t  $b240 $f244 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '|' '|' '_' '_' ' ' ' ' ' '
+    printf "\t  $b242 $f242 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '\' '\' '\' '\' '\' ' ' ' '
+    printf "\t  $b244 $f240 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' ' ' '\' '\' '\' '\' '\' '\'
+    printf "\t  $b246 $f238 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '\' '\' '|'
+    printf "\t  $b248 $f237 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' ' ' '|' '|'
+    printf "\t  $b250 $f236 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '\' '\' '_' '_' '_' '/' '/' ' ' ' ' '|' '|' ' ' ' ' '|' '|' 'L' 'L' '=' '=' '=' '\' '\' '_' '_' '_' '/' '/'
+    printf "\t  $b252 $f234 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" ' ' 'U' 'U' 'U' 'U' 'U' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' 'L' 'L' '=' '=' '=' ' ' '\' 'S' 'S' 'S' '/' ' '
+    echo -ne "\n\r";
+}
+
+function helpText() {
+	banner; # call the banner function
+	local num=1;
+	local helpbgc=$( tput setab 237 ); # alternates to 243 for stripes
+    # -= DEFAULT CASE: HELP TEXT AND INSTRUCTONS =-
+	printf "$hdr%-8s$lu $hdr%-16s \t  $hdr%-80s$rst\n\r"	"Argument$lu"	"Script Name$lu" "Description$lu";
+	for cmd in ${!sar[@]}
+	do
+		# alternation on even number
+		[[ $(( num % 2 )) -eq 0  ]] && helpbgc=$( tput setab 237 ) || helpbgc=$( tput setab 234 )
+		printf "$helpbgc${org}%-8s ${grn}%-16s ${ylw}%-80s$rst\n\r" "  $cmd" "${sar[$cmd]}" "${helpTextArray[$cmd]}";
+:		$((num++));
+	done
+	echo -e "\n\rFor a more detailed desciption of the utils wrapper and it's scripts see the man page, $codeclr man utils $rst.";
+	printf "$_reset \n\r";
+	unset cmd;
+}
+
+helpText;
+unset -f banner;
+unset -f helpText;

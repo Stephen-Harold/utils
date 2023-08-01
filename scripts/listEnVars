@@ -1,0 +1,73 @@
+#!/bin/bash
+
+declare -A arrayVars;
+
+# Prints env as name:value list
+function printEnvVars(){
+	local _num=0 ## Line numbers.
+    printf "\n\r"
+    printf "%-6s%24s%-56s\n\r" "${hdr}No.${rst}" "${hdr}Key${rst}" "${hdr}Value${rst}"
+	printenv | while read -r _val
+	do
+	:	$((++_num));
+        [[ $((_num % 2)) -eq 0 ]] && tput setaf 4 || tput setaf 14
+        _key=${_val//=*}
+        _value=${_val//*=}
+        if [[ "$_key" =~ PATH ]]
+        then
+            continue;
+        else
+            printf " %2d %24s | %-56s \n\r" "$_num" "$_key" "$_value"
+        fi
+	done
+  tput sgr0;
+}
+
+# for i in $(printenv); do; echo -e "$i"; done;
+
+function listEnvVars() {
+	local num=1;
+    printf "\n\r${hdr}%-6s${hdr}%-36s\t    ${hdr}%-56s \n\r" "No.${lu}    " "Key${lu}" "Value${rst}"
+    for item in $(printenv)
+    do
+    	[[ "$item" =~ PATH ]] && continue
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\r" "$num." "${item//=*}" "${item//*=}";
+:		$((++num));
+	done
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\n\r" "$num." "PATH" "$(echo $PATH)";
+}
+
+function dumpEnvVars() {
+
+		local num=1;
+		for i in $(env -0 | sort -z | tr '\0' '\n')
+		do
+			arrayVars['$num']="$i";
+		:	$((num++));
+		done
+
+    printf "\n\r${hdr}%-6s${hdr}%-36s\t    ${hdr}%-56s \n\r" "No.${lu}    " "Key${lu}" "Value${rst}"
+    for i in ${!arrayVars[@]}
+    do
+    	item=${arrayVars[$i]};
+    	[[ "$item" =~ PATH ]] && continue
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\r" "$num." "${item//=*}" "${item//*=}";
+		done
+    printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\n\r" "$num." "PATH" "$(echo $PATH)";
+}
+
+
+# echo "Print:";
+# printEnvVars;
+# echo -e "\n\r\n\r";
+# echo "List:";
+listEnvVars;
+
+# echo -e "\n\r\n\r";
+# echo "Dump:";
+# dumpEnvVars;
+
+
+unset -f printEnvVars;
+unset -f listEnvVars;
+unset -f dumpEnvVars;

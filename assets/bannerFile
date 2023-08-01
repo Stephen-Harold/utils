@@ -1,0 +1,39 @@
+#!/usr/locl/bin/bash
+
+function showBanner() {
+    # -= BACKGROUND =-
+    local bg_red=$(tput setab      1);
+    local bg_green=$(tput setab    2);
+    local bg_yellow=$(tput setab   3);
+    local bg_blue=$(tput setab     4);
+    local bg_magenta=$(tput setab  5);
+    local bg_cyan=$(tput setab     6);
+    local bg_white=$(tput setab    7);
+    # -= FOREGROUND =-
+    local f254=$(tput setaf     254);
+    local f253=$(tput setaf     252);
+    local f252=$(tput setaf     250);
+    local f251=$(tput setaf     248);
+    local f250=$(tput setaf     246);
+    local f249=$(tput setaf     244);
+    local f248=$(tput setaf     242);
+    local f247=$(tput setaf     240);
+    local f246=$(tput setaf     238);
+    local f245=$(tput setaf     236);
+    local reset=$(tput sgr0);
+    # -= The Banner: THE LETTERS U T I L S in huge scale =-
+    echo -ne "\n\r";
+    printf "\t  $bg_black $f254 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" ' ' ' ' ' ' ' ' ' ' ' ' ' ' '_' '_' '_' '_' '_' '_' '_' '_' ' ' ' ' ' ' ' ' ' ' ' ' '_' '_' '_' '_' '_' ' '
+    printf "\t  $bg_black $f253 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' 'T' 'T' 'T' 'T' 'T' 'T' 'I' 'I' '|' '|' ' ' ' ' ' ' '/' '/' 'S' 'S' 'S' '\' '\'
+    printf "\t  $bg_black $f252 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' 'T' 'T' ' ' ' ' '_' '_' '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' ' ' '|' '|'
+    printf "\t  $bg_black $f251 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '|' '|' '_' '_' ' ' ' ' ' '
+    printf "\t  $bg_black $f250 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '\' '\' '\' '\' '\' ' ' ' '
+    printf "\t  $bg_black $f249 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' ' ' '\' '\' '\' '\' '\' '\'
+    printf "\t  $bg_black $f248 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '\' '\' '|'
+    printf "\t  $bg_black $f247 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' ' ' ' ' '|' '|' '|' '|' ' ' ' ' ' ' '|' '|' ' ' ' ' ' ' '|' '|'
+    printf "\t  $bg_black $f246 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" '\' '\' '_' '_' '_' '/' '/' ' ' ' ' '|' '|' ' ' ' ' '|' '|' 'L' 'L' '=' '=' '=' '\' '\' '_' '_' '_' '/' '/'
+    printf "\t  $bg_black $f245 %-1s%-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s %-1s%-1s %-1s%-1s%-1s%-1s%-1s %-1s%-1s%-1s%-1s%-1s%-1s%-1s $reset \n\r" ' ' 'U' 'U' 'U' 'U' 'U' ' ' ' ' ' ' '|' '|' ' ' ' ' '|' '|' 'L' 'L' '=' '=' '=' ' ' '\' 'S' 'S' 'S' '/' ' '
+    echo -ne "\n\r";
+}
+showBanner;
+unset -f showBanner;

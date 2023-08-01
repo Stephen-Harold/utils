@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# arguments to be passed to the systemctl to retrieve information
+cmdArray=(
+	"getdate"\
+	"gettime"\
+	"gettimezone"\
+	"getusingnetworktime"\
+	"getnetworktimeserver"\
+	"getsleep"\
+	"getcomputersleep"\
+	"getdisplaysleep"\
+	"getharddisksleep"\
+	"getwakeonnetworkaccess"\
+	"getrestartpowerfailure"\
+	"getrestartfreeze"\
+	"getallowpowerbuttontosleepcomputer"\
+	"getremoteappleevents"\
+	"getcomputername"\
+	"getlocalsubnetname"\
+	"getstartupdisk"\
+	"getwaitforstartupafterpowerfailure"\
+	"getdisablekeyboardwhenenclosurelockisengaged"\
+);
+
+function formatOutput() {
+	local num=1;
+	printf "\n\r${hdr}%-8s   ${hdr}%-36s\t   ${hdr}%-42s$rst\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
+	for c in ${cmdArray[@]}
+	do
+		output=$( systemsetup -$c | xargs ); # xargs strims white-space
+	 	dmsg="variable output has value of $output"; debug;
+		dmsg="c has value of $c"; debug;
+		case $c in
+			getsleep)
+				dmsg="case match: no print & DO NOTHING on ||| getsleep |||"; debug;
+				# SKIP SKIP SKIP SKIP
+			;;
+			gettime|getdate)
+				dmsg="case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||"; debug;
+				printf "%-6s${grn}%-36s${rst} ${ylw}%-42s${rst}\n\r" "$num" "$c" "$output";
+			;;
+			getdisablekeyboardwhenenclosurelockisengaged)
+				dmsg="case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||"; debug;
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num" "$c" "${output//*:}";
+			;;
+			*)
+				dmsg="Case default: $c ${output//*:}"; debug;
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num." "$c" "${output//*:}";
+			;;
+	esac
+	:	$((num++));
+	done
+
+	echo -e "\nUse ${code} sudo systemsetup -<command> ${rst} to see the commands individualy.\n\rDon't forget the '-' tack infront of the command.."
+	echo -e "\n\r";
+}
+
+formatOutput;
+unset -f formatOutput;
+unset cmdArray;

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# disable IPv6 for loopback
+echo "${grn}Disable loopback number 01${rst}";
+ifconfig lo0 inet6 fe80::1%lo0 delete;
+echo "${grn}Disable loopback number 02${rst}";
+ifconfig lo0 inet6 ::1 delete;
+
+# disable ipv6 for Wi-Fi (en0)
+echo "${grn}Disable Wi-Fi (en0) number 01${rst}";
+ifconfig en0 inet6 fe80::1%en0 delete;
+echo "${grn}Disable Wi-Fi (en0) number 02${rst}";
+ifconfig en0 inet6 ::1 delete;
+
+echo "${ylw}complete${rst}";

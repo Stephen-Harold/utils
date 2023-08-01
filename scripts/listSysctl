@@ -1,0 +1,48 @@
+#!/bin/bash
+
+declare -A -x arrayKeys;
+
+function getTopLevelKeys() {
+		local query=$( sysctl -N -a | egrep -i -o '^([a-z]*)\.' | tr -d '.' | sort -u );
+    local num=1;
+    dmsg="Running sysctl cmd to populate array"; debug;
+    for topLevelKey in $query
+    do
+				arrayKeys[$num]="$topLevelKey";
+				[[ $? != 0 ]] && throwEx "listSysctl" "getTopLevelKeys" "Error trying to add the '$topLevelKey' key to array posistion no. $num" 150 0;
+				dmsg="$num $topLevelKey added to the array"; debug;
+:       $((num++));
+    done
+}
+
+function getUsersSelection() {
+    printf "\n${GREEN}%-5s\t${GREEN}%-27s${RESET}\n\r" "${UL}No.${LU}" "${UL}Key${LU}";
+    dmsg="Listing top level keys for user, array count: ${arrayKeys[#]}"; debug;
+    for key in "${!arrayKeys[@]}"
+    do
+#		    dmsg="getUsersSelection loop at: $arrayValue"; debug;
+				[[ $(( key % 2 )) -eq 0  ]] && bgc=$( tput setab 237 ) || bgc=$( tput setab 234 )
+        printf "${bgc}${WHITE}%-5s\t${WHITE}%-27s${RESET}\n\r" "$key." "${arrayKeys[$key])";
+    done
+    dmsg="Request user input to make selection"; debug;
+		echo -e "\nSelect top level key from the list be entering the relative number: "; read userSelectionKeyNumber;
+
+		dmsg="search for key in array based on user selection number: $userSelectionKeyNumber"; debug;
+		for ber in ${!arrayKeys[@]}
+		do
+
+				[[ $ber -eq $userSelectionKeyNumber ]] && declare -r -x topKey=${arrayKeys[$ber]}
+		done
+		dmsg="Set key as $topKey"; debug;
+}
+
+# entry point
+dmsg="Calling function populateArray"; debug
+getTopLevelKeys;
+getUsersSelection;
+#for i in "${!arrayKeys[@]}"
+#do
+#  echo "key  : $i"
+#  echo "value: ${arrayKeys[$i]}"
+#done
+
