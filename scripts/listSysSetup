@@ -25,28 +25,28 @@ cmdArray=(
 
 function formatOutput() {
 	local num=1;
-	printf "\n\r${hdr}%-8s   ${hdr}%-36s\t   ${hdr}%-42s$rst\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
-	for c in ${cmdArray[@]}
+	printf "\n\r${hdr}%-8s   ${hdr}%-36s\t   ${hdr}%-42s${rst}\n\r" "No.${lu}" "Commands${lu}" "Output${lu}";
+	for cmd in "${cmdArray[@]}"
 	do
-		output=$( systemsetup -$c | xargs ); # xargs strims white-space
-	 	dmsg="variable output has value of $output"; debug;
-		dmsg="c has value of $c"; debug;
-		case $c in
+		output=$( systemsetup "-${cmd}" | xargs ); # xargs trims white-space
+	 	DEBUG "formatOutput" "variable output has value of ${output}";
+		DEBUG "formatOutput" "c has value of ${cmd}";
+		case ${cmd} in
 			getsleep)
-				dmsg="case match: no print & DO NOTHING on ||| getsleep |||"; debug;
+				DEBUG "formatOutput" "case match: no print & DO NOTHING on ||| getsleep |||";
 				# SKIP SKIP SKIP SKIP
 			;;
 			gettime|getdate)
-				dmsg="case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||"; debug;
-				printf "%-6s${grn}%-36s${rst} ${ylw}%-42s${rst}\n\r" "$num" "$c" "$output";
+				DEBUG "formatOutput" "case match: custom print & continue on ||| getallowpowerbuttontosleepcomputer |||";
+				printf "%-6s${grn}%-36s${rst} ${ylw}%-42s${rst}\n\r" "${num}" "${cmd}" "${output}";
 			;;
 			getdisablekeyboardwhenenclosurelockisengaged)
-				dmsg="case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||"; debug;
-				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num" "$c" "${output//*:}";
+				DEBUG "formatOutput" "case match: custom print & continue on ||| getdisablekeyboardwhenenclosurelockisengaged |||";
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "${num}" "${cmd}" "${output//*:}";
 			;;
 			*)
-				dmsg="Case default: $c ${output//*:}"; debug;
-				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "$num." "$c" "${output//*:}";
+				DEBUG "formatOutput" "Case default: ${cmd} ${output//*:}";
+				printf "%-6s${grn}%-36s${rst}${ylw}%-42s${rst}\n\r" "${num}." "${cmd}" "${output//*:}";
 			;;
 	esac
 	:	$((num++));

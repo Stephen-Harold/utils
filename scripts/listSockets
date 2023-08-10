@@ -1,0 +1,39 @@
+#!/usr/local/bin/bash
+
+# get socket list from 'lsof -R' command
+function listSockets() {
+    for line in $( lsof -i -U | grep -E -i 'CLOSED|LISTEN|ESTABLISHED' --color=always )
+    do
+        if [[ ${line} =~ [:alpha:] ]]
+        then
+            echo "${line}"
+        fi
+    done
+}
+
+function convertByteAddress() {
+    local bAddr01=$((0xa23e / 256));
+    local bAddr02=$((0x44be / 256));
+    local bAddr03=$((0x89a6 / 256));
+    local bAddr04=$((0x9bfb / 256));
+
+    printf "%d.%d.%d.%d\n" ${bAddr01} ${bAddr02} ${bAddr03} ${bAddr04}
+}
+
+echo -e "Enter [C] to convert\n\rEnter [L] to list";
+read -p ": " -n 1 -r
+echo # (optional) move to a new line
+case ${REPLY} in
+    c)
+        convertByteAddress;
+    ;;
+    n)
+        listSockets;
+    ;;
+    *)
+    echo "Default swicth";
+    ;;
+esac
+
+
+

@@ -13,11 +13,11 @@ function printEnvVars(){
         [[ $((_num % 2)) -eq 0 ]] && tput setaf 4 || tput setaf 14
         _key=${_val//=*}
         _value=${_val//*=}
-        if [[ "$_key" =~ PATH ]]
+        if [[ "${_key}" =~ PATH ]]
         then
             continue;
         else
-            printf " %2d %24s | %-56s \n\r" "$_num" "$_key" "$_value"
+            printf " %2d %24s | %-56s \n\r" "${_num}" "${_key}" "${_value}"
         fi
 	done
   tput sgr0;
@@ -30,11 +30,11 @@ function listEnvVars() {
     printf "\n\r${hdr}%-6s${hdr}%-36s\t    ${hdr}%-56s \n\r" "No.${lu}    " "Key${lu}" "Value${rst}"
     for item in $(printenv)
     do
-    	[[ "$item" =~ PATH ]] && continue
-    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\r" "$num." "${item//=*}" "${item//*=}";
+    	[[ "${item}" =~ PATH ]] && continue
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s${rst} \n\r" "${num}." "${item//=*}" "${item//*=}";
 :		$((++num));
 	done
-    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\n\r" "$num." "PATH" "$(echo $PATH)";
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s${rst} \n\n\r" "${num}." "PATH" "$(echo ${PATH})";
 }
 
 function dumpEnvVars() {
@@ -42,18 +42,18 @@ function dumpEnvVars() {
 		local num=1;
 		for i in $(env -0 | sort -z | tr '\0' '\n')
 		do
-			arrayVars['$num']="$i";
+			arrayVars['${num}']="$i";
 		:	$((num++));
 		done
 
     printf "\n\r${hdr}%-6s${hdr}%-36s\t    ${hdr}%-56s \n\r" "No.${lu}    " "Key${lu}" "Value${rst}"
-    for i in ${!arrayVars[@]}
+    for i in "${!arrayVars[@]}"
     do
     	item=${arrayVars[$i]};
-    	[[ "$item" =~ PATH ]] && continue
-    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\r" "$num." "${item//=*}" "${item//*=}";
+    	[[ "${item}" =~ PATH ]] && continue
+    	printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s${rst} \n\r" "${num}." "${item//=*}" "${item//*=}";
 		done
-    printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s$rst \n\n\r" "$num." "PATH" "$(echo $PATH)";
+    printf "${wht}%-6s ${grn}%-36s ${ylw}%-56s${rst} \n\n\r" "${num}." "PATH" "$(echo ${PATH})";
 }
 
 

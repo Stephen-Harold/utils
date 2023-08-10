@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2155,SC2250,SC1003
 function banner() {
     # -= BACKGROUND =-
     local b236=$(tput setab     236);
@@ -42,9 +43,9 @@ function helpText() {
 	banner; # call the banner function
 	local num=1;
 	local helpbgc=$( tput setab 237 ); # alternates to 243 for stripes
-    # -= DEFAULT CASE: HELP TEXT AND INSTRUCTONS =-
+    # -= DEFAULT CASE: HELP TEXT AND INSTRUCTIONS =-
 	printf "$hdr%-8s$lu $hdr%-16s \t  $hdr%-80s$rst\n\r"	"Argument$lu"	"Script Name$lu" "Description$lu";
-	for cmd in ${!sar[@]}
+	for cmd in "${!sar[@]}"
 	do
 		# alternation on even number
 		[[ $(( num % 2 )) -eq 0  ]] && helpbgc=$( tput setab 237 ) || helpbgc=$( tput setab 234 )
@@ -52,7 +53,7 @@ function helpText() {
 :		$((num++));
 	done
 	echo -e "\n\rFor a more detailed desciption of the utils wrapper and it's scripts see the man page, $codeclr man utils $rst.";
-	printf "$_reset \n\r";
+	printf "%s \n\r" "${_reset}"
 	unset cmd;
 }
 

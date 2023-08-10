@@ -10,44 +10,73 @@
 #|
 
 # -= {ScriptName}: get script name from array =-
-function getScriptName() {
+function setScriptName() {
 	# shellcheck disable=SC2154
 	for s in "${!sar[@]}"
 	do
-		dmsg="utils: \(getScriptName\) Testing $s against ${userInput}"; debug;
+		DEBUG "utils: \(setScriptName\)" "Testing $s against ${userInput}";
 		if [[ $s = "${userInput}" ]]
 		then
 			scriptName=${sar[$s]};
-			dmsg="utils: \(getScriptName\) Breaking, match found for inside loop: ${scriptName}"; debug;
+			DEBUG "utils: \(setScriptName\)" "Breaking, match found for inside loop: ${scriptName}";
 			break;
 		fi
 	done
-	[[ -z ${scriptName} ]] && throwEx "utils" "getScriptName" "'${userInput}' does not have a file associated with it, no file found in array." 104 1 || \
-							dmsg="utils: \(getScriptName\) File name is set to ${scriptName}"; debug
+
+	# TEST FILE SYSTEM & THROW EXCEPTION ON NON-EXISTING FILE
+	[[ -d "${scriptDir}" ]] && DEBUG "utils: (executeScript)" "${scriptDir} directory exists" || \
+		throwEx "utils" "executeScript" "'$( basename ${scriptDir} )' directory is not available." 106 0
+
+	[[ -x "${scriptDir}/${scriptName}" ]] && DEBUG "utils: \(setScriptName\)" "File name is set to ${scriptName}" || \
+		throwEx "utils" "setScriptName" "'${userInput}' does not have a file associated with it, no file found in array." 104 1
 }
 
 # -= Execution: Make sure the script is available and fire it up =-
-function exScript() {
-	[[ -z ${scriptName} ]] && throwEx "utils" "exScript" "The script file has not been set, cannot continue." 105 0 || \
-	dmsg="utils: (exScript) ${scriptName} exists"; debug
-#	[[ -z ${scriptDir} ]] & throwEx "utils" "exScript" "'$( basename ${scriptDir} )' directory is not available." 106 0 || \
-		dmsg="utils: (exScript) ${scriptDir} directory exists"; debug
-	[[ ! -r "${scriptDir}/${scriptName}" ]] && dmsg="utils: (exScript) ${scriptDir}/${scriptName} is readable, will be executed next"; debug || \
-	throwEx "utils" "exScript" "Permissions are wrong on ${scriptDir}/${scriptName}, it isn't readable." 107 0
+function executeScript() {
+	# True if $scriptName is set with value
+	[[ -v ${scriptName} ]] && throwEx "utils" "executeScript" "The script file has not been set, cannot continue." 105 0 || \
+		DEBUG "utils: (executeScript)" "${scriptName} exists";
+
+	[[ -r "${scriptDir}/${scriptName}" ]] && DEBUG "utils: (executeScript)" "${scriptDir}/${scriptName} is readable, will be executed next" || \
+		throwEx "utils" "executeScript" "Permissions are wrong on ${scriptDir}/${scriptName}, it isn't readable." 107 0
+
 	# Execute Script...
 	# shellcheck disable=SC1090
 	. "${scriptDir}/${scriptName}";
-	dmsg="utils: (exScript) ${scriptDir}/${scriptName} executed succesfully"; debug
+	DEBUG "utils: (executeScript)" "${scriptDir}/${scriptName} executed succesfully";
 }
 
+function sudoRequiredTest() {
+	# check if sudo is required
+	for v in "${reqSudo[@]}"
+	do
+		DEBUG "Utils (sudoRequiredTest)" "(sudo test) Testing $v against user input: ${userInput}";
+		if [[ "$v" = "${userInput}" ]] && [[ "${USER}" != "root" ]]
+		then
+			DEBUG "utils: (sudoRequiredTest)" "Required: Yes, $v does require sudo, current user is ${USER}";
+			echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
+			echo -e "re-run using: ${codeclr} sudo utils ${userInput} ${rst} ${grn}or just enter ${codeclr} sudo !! ${rst}\n\r";
+			exit 107;
+		else
+			DEBUG "utils: (sudoRequiredTest)" "sudo is ${ul}not${lu} required?";
+		fi
+	done
+}
+
+#################################################=-
+###################################################=-
 # -= ENTRY POINT: Application workflow starts here =-
+###################################################=-
+#################################################=-
+
 # get common functions and variables
 confFile="/usr/local/lib/utils.d/conf/utils.conf";
 # shellcheck disable=SC1090
-[[ -r ${confFile} ]] && source ${confFile}; dmsg="utils: (ENTRY POINT) Configuration file loaded"; debug || throwEx "utils" "get configuration file" "Configuration file not available at ${confFile}" 101 0
+[[ -x ${confFile} ]] && source ${confFile}; DEBUG "utils (ENTRY POINT)" "Configuration file loaded" || \
+	throwEx "utils (ENTRY POINT)" "get configuration file" "Configuration file not available at ${confFile}" 101 0
 
 # 102 -z returns True if the first argument has no value
-[[ -z $1 ]] && throwEx "utils" "No option was set by User" "An option is required to select a script." 102 1 || dmsg="Argument: $1"; debug;
+[[ -v $1 ]] && throwEx "utils (ENTRY POINT)" "No option was set by User" "An option is required to select a script." 102 1 || DEBUG "Entry Point" "Argument: $1";
 
 # trim user input to a single char (if possible) and declare as read-only variable
 # shellcheck disable=SC2155
@@ -56,29 +85,17 @@ declare -r userInput="$( echo "$1" | tr '-' " " | tr -d " " )";
 # set and test the number of chars in the variable
 argCount="${#userInput}";
 
-dmsg="utils: (ENTRY POINT) Number characters in users argument is ${argCount}"; debug;
-[[ ${argCount} -gt 1 ]] && throwEx  "utils" "Argument lenght?" "Invalid argument lenght." 103 1;
+DEBUG "utils: (ENTRY POINT)" "Number characters in users argument is ${argCount}";
+[[ ${argCount} -gt 1 ]] && throwEx  "utils (ENTRY POINT)" "Argument lenght?" "Invalid argument lenght." 103 1;
 
-# check if sudo is required
-for v in "${reqSudo[@]}"
-do
-	dmsg="(sudo test) Testing $v against user input: ${userInput}"; debug;
-	if [[ "$v" = "${userInput}" ]] && [[ "${USER}" != "root" ]]
-	then
-		dmsg="(sudo test) Yes, $v does require sudo, current user is ${USER}"; debug;
-		echo -e "\n\r${ylw}${ul}sudo${lu}${grn} is required to run this script";
-		echo -e "re-run using: ${codeclr} sudo utils ${userInput} ${rst} ${grn}or just enter ${codeclr} sudo !! ${rst}\n\r";
-		exit 107;
-	else
-		dmsg="(sudo test) sudo is ${ul}not${lu} required?"; debug;
-	fi
-done
 
-getScriptName;
-exScript;
 
-unset -f getScriptName;
-unset -f exScript;
+setScriptName;
+sudoRequiredTest;
+executeScript;
+
+unset -f setScriptName;
+unset -f executeScript;
 unset confFile;
 unset argCount;
 declare +r "$userInput";
