@@ -63,6 +63,23 @@ function sudoRequiredTest() {
 	done
 }
 
+function listOptions() {
+	DEBUG "utils (listOptions" "List available options to user";
+	printf "%-6s\t%-32s\n\r" "${hdr}Option${lu}${rst}" "${hdr}Scriptname${lu}${rst}";
+	for opt in "${!sar[@]}"
+	do
+		printf "%-6s\t%-32s\n\r" "${grn}${opt}" "${ylw}${sar[${opt}]}${rst}";
+	done
+	DEBUG "utils (listOptions)" "User select option grom list";
+	echo -e "Select an option from the list above.";
+	read -p ": " -n 1 -r
+	echo -e "\n\r";
+	local rply="${REPLY}";
+	[[ -v "${rply}" ]] && throwEx "utils (listOptions)" "No option was set" "An option is required to select a script." 102 1
+	userInput="${rply}";
+	DEBUG "utils (listOptions)" "User selected ${userInput}";
+}
+
 #################################################=-
 ###################################################=-
 # -= ENTRY POINT: Application workflow starts here =-
@@ -75,29 +92,25 @@ confFile="/usr/local/lib/utils.d/conf/utils.conf";
 [[ -x ${confFile} ]] && source ${confFile}; DEBUG "utils (ENTRY POINT)" "Configuration file loaded" || \
 	throwEx "utils (ENTRY POINT)" "get configuration file" "Configuration file not available at ${confFile}" 101 0
 
-# 102 -z returns True if the first argument has no value
-[[ -v $1 ]] && throwEx "utils (ENTRY POINT)" "No option was set by User" "An option is required to select a script." 102 1 || DEBUG "Entry Point" "Argument: $1";
-
-# trim user input to a single char (if possible) and declare as read-only variable
-# shellcheck disable=SC2155
-declare -r userInput="$( echo "$1" | tr '-' " " | tr -d " " )";
-
+declare -x userInput;
+userInput="$( echo "$1" | tr '-' " " | tr -d " " )";
 # set and test the number of chars in the variable
 argCount="${#userInput}";
-
 DEBUG "utils: (ENTRY POINT)" "Number characters in users argument is ${argCount}";
-[[ ${argCount} -gt 1 ]] && throwEx  "utils (ENTRY POINT)" "Argument lenght?" "Invalid argument lenght." 103 1;
-
-
-
+if [[ ${argCount} -lt 1 ]]
+then
+	DEBUG "utils (Entry Point)" "No option set in first argument";
+	listOptions;
+fi
+DEBUG "utils (Entry Point)" "Option set in first argument ${1}";
 setScriptName;
 sudoRequiredTest;
 executeScript;
 
 unset -f setScriptName;
 unset -f executeScript;
-unset confFile;
 unset argCount;
 declare +r "$userInput";
+unset confFile;
 # clean exit
 exit 0;
