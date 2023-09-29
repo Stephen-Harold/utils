@@ -1,5 +1,5 @@
 #!/bin/bash
 
-#| Call on enviroments defualt editor with given filename
+#| Call on environments default editor with given filename
 
 [[ -z $1 ]] && [[ -r $1 ]] && $EDITOR $1 || echo "Filename not set as 1st argument or not found/readable at given location."

@@ -1,9 +1,9 @@
 {
-	"utils":
-	{
-		"listSysctl":
-		{
-			"Key01": "null"
-    }
-	}
+    "NetworkSecurityGroup": [
+        {
+            "ResourceGroup": "HaroldSmith-org-ResourceGroup",
+            "AzureSubscription": "Default",
+            "Name": "HaroldSmith-org-VM-nsg"
+        }
+    ]
 }

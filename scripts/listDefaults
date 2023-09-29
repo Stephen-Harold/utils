@@ -2,6 +2,7 @@
 
 # -= Defaults: Open Python3 App to Curses =-
 #python3 ../apps/listDefaultsAndEdit.py
+python3 "/usr/local/lib/utils.d/apps/listDefaultsAndEdit.py"
 
 
 

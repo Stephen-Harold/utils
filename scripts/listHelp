@@ -1,5 +1,6 @@
 #!/bin/bash
-# shellcheck disable=SC2155,SC2250,SC1003
+# shellcheck disable=SC2155,SC2250
+# shellcheck disable=SC2034  # Unused variables
 function banner() {
     # -= BACKGROUND =-
     local b236=$(tput setab     236);
